@@ -33,7 +33,7 @@ public class LivroDAO {
 	}
 
 	public void atualizar(Livro livro) {
-		String sql = "UPDATE livro SET titulo=?, autor=?, resumo=?, ano=?";
+		String sql = "UPDATE livro SET titulo=?, autor=?, resumo=?, ano=? WHERE id=?";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, livro.getTitulo());
@@ -42,7 +42,7 @@ public class LivroDAO {
 			ps.setString(4, livro.getAno());
 			ps.setInt(5, livro.getId());
 
-			ps.execute();
+			ps.executeUpdate();
 			ps.close();
 
 		} catch (SQLException e) {
@@ -86,7 +86,7 @@ public class LivroDAO {
 	}
 	
 	public List<Livro> buscarTodos(){
-		String sql = "SELECT id, titulo, autor, resumo, ano FROM livro";
+		String sql = "SELECT * FROM livro";
 		List<Livro> livros = new ArrayList<>();
 
 		try {
@@ -123,8 +123,4 @@ public class LivroDAO {
 			e.printStackTrace();
 		}
 	}
-
-	
-	
-
 }
