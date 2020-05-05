@@ -23,27 +23,27 @@ public class LivroServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html");
 		String acao = req.getParameter("acao");
-		Livro livro = new Livro();
-		String id = req.getParameter("id");
-		LivroDAO livroDAO = new LivroDAO();
-		if(acao.equals("excluir")){
 
+
+		if(acao.equals("excluir")){
+			Livro livro = new Livro();
+			LivroDAO livroDAO = new LivroDAO();
+			String id = req.getParameter("id");
 			if (id != null) {
 				livro.setId(Integer.parseInt(id));
 			}
 
 			livroDAO.deletar(livro);
-			req.setAttribute("mensagem", "Livro excluído com sucesso!");
-			RequestDispatcher dispatcher = req.getRequestDispatcher("/listar.jsp");
+			req.setAttribute("mensagem", "Livro excluÃ­do com sucesso!");
+			RequestDispatcher dispatcher = req.getRequestDispatcher("listar.jsp");
 			dispatcher.forward(req, resp);
 		}else if (acao.equals("editar")) {
-			if (id != null) {
-				livro.setId(Integer.parseInt(id));
-			}
-			Integer idLivro = Integer.parseInt(id);
-			Livro livro1 = livroDAO.buscarId(idLivro);
-			livroDAO.atualizar(livro1);
-			RequestDispatcher dispatcher = req.getRequestDispatcher("/editar.jsp");
+			LivroDAO livroDAO = new LivroDAO();
+			String id = req.getParameter("id");
+			Livro livro = livroDAO.buscarId(Integer.parseInt(id));
+			req.setAttribute("livro", livro);
+			RequestDispatcher dispatcher = req.getRequestDispatcher("editar.jsp");
+			livroDAO.atualizar(livro);
 			dispatcher.forward(req, resp);
 			req.setAttribute("mensagem", "Livro atualizado com sucesso!");
 
@@ -57,17 +57,32 @@ public class LivroServlet extends HttpServlet{
 		String autor  = req.getParameter("autor");
 		String resumo = req.getParameter("resumo");
 		String ano  = req.getParameter("ano");
-		Livro livro = new Livro();
-		livro.setTitulo(titulo);
-		livro.setAutor(autor);
-		livro.setResumo(resumo);
-		livro.setAno(ano);
 
-		LivroDAO livroDAO = new LivroDAO();
-		livroDAO.cadastrar(livro);
-		req.setAttribute("mensagem", "Livro cadastrado com sucesso!");
-		RequestDispatcher dispatcher = req.getRequestDispatcher("/cadastrar.jsp");
-		dispatcher.forward(req, resp);
+		String id = req.getParameter("id");
+		if(id!=null){
+			LivroDAO livroDAO = new LivroDAO();
+			Livro livro = livroDAO.buscarId(Integer.parseInt(id));
+			livro.setTitulo(req.getParameter("titulo"));
+			livro.setAutor(req.getParameter("autor"));
+			livro.setResumo(req.getParameter("resumo"));
+			livro.setAno(req.getParameter("ano"));
+			livroDAO.atualizar(livro);
+			req.setAttribute("mensagem", "Livro atualizado com sucesso!");
+			RequestDispatcher dispatcher = req.getRequestDispatcher("listar.jsp");
+			dispatcher.forward(req, resp);
+		}else{
+			Livro livro = new Livro();
+			livro.setTitulo(titulo);
+			livro.setAutor(autor);
+			livro.setResumo(resumo);
+			livro.setAno(ano);
+
+			LivroDAO livroDAO = new LivroDAO();
+			livroDAO.cadastrar(livro);
+			req.setAttribute("mensagem", "Livro cadastrado com sucesso!");
+			RequestDispatcher dispatcher = req.getRequestDispatcher("cadastrar.jsp");
+			dispatcher.forward(req, resp);
+		}
 
 	}
 }
